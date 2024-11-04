@@ -16,7 +16,7 @@ import (
 
 // AnalyticsMetricsOverTimeResponseContext struct for AnalyticsMetricsOverTimeResponseContext
 type AnalyticsMetricsOverTimeResponseContext struct {
-	// Returns the metric you selected.
+	// Returns the metric and relevant parameters you selected.
 	Metric *string `json:"metric,omitempty"`
 	// Returns the interval you selected.
 	Interval  *string                                             `json:"interval,omitempty"`

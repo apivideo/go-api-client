@@ -4,7 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Metric** | Pointer to **string** | Returns the metric you selected. | [optional] 
+**Metric** | Pointer to **string** | Returns the metric and relevant parameters you selected. | [optional] 
 **Interval** | Pointer to **string** | Returns the interval you selected. | [optional] 
 **Timeframe** | Pointer to [**AnalyticsAggregatedMetricsResponseContextTimeframe**](AnalyticsAggregatedMetricsResponseContextTimeframe.md) |  | [optional] 
 

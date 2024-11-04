@@ -12749,6 +12749,8 @@ paths:
           - `impression` is the number of times your content has been loaded and was ready for playback. You can use the aggregation `count` with this metric.
           - `impression-time` is the time in milliseconds that your content was loading for until the first video frame is displayed. You can use the aggregations `average` and `sum` with this metric.
           - `watch-time` is the cumulative time in seconds that the user has spent watching your content. You can use the aggregations `average` and `sum` with this metric.
+          - `ccv`: is the number of concurrent viewers, or users watching at the same time.
+          - `view`: the total number of viewers until this point in time.
         explode: false
         in: path
         name: metric
@@ -12761,6 +12763,8 @@ paths:
           - impression
           - impression-time
           - watch-time
+          - ccv
+          - view
           type: string
         style: simple
       - description: "Use this path parameter to define a way of collecting data for\
@@ -12770,7 +12774,11 @@ paths:
           \ This aggregation can be used only with the `play` metric.\n- `total` calculates\
           \ the total number of events for the `play` metric. \n- `average` calculates\
           \ an average value for the selected metric.\n- `sum` adds up the total value\
-          \ of the select metric.\n"
+          \ of the select metric.\n- `peak` shows the highest value of the `ccv` metric\
+          \ in the timeframe of your request. You can use this aggregation only with\
+          \ the `ccv` metric.\n- `live` shows the highest value of the `ccv` metric\
+          \ from the last 20 seconds. You can use this aggregation only with the `ccv`\
+          \ metric.\n"
         explode: false
         in: path
         name: aggregation
@@ -12782,6 +12790,8 @@ paths:
           - total
           - average
           - sum
+          - peak
+          - live
           type: string
         style: simple
       - description: |
@@ -12815,6 +12825,40 @@ paths:
           format: date-time
           type: string
         style: form
+      - description: "Use this query parameter to control how viewer data is counted:\n\
+          \n- `true` means that a single user watching multiple times counts as 1\
+          \ unique viewer\n- `false` means that all views count, even if from the\
+          \ same user.\n\nThe API accepts this parameter only when you use the `ccv`\
+          \ or `view` metric.          \n\nViewers are unique for 1 day.\n\nThe API\
+          \ determines uniqueness based on a viewer's `user-agent` and IP address.\
+          \ This means that the API can filter viewers using multiple tabs to watch\
+          \ the same video multiple times, but cannot filter for viewers who use multiple\
+          \ browsers to watch the same content multiple times.\n"
+        example: true
+        explode: false
+        in: query
+        name: unique
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: "Use this query parameter to define how many seconds a view has\
+          \ to last to be counted in analytics data.\n\n- You can only use this parameter\
+          \ with the `view` metric.\n- The accepted values are `3s`, `5s`, `10s`,\
+          \ and `30s`. \n- If you do not set this parameter, the API defaults to `5s`.\n"
+        example: 5s
+        explode: false
+        in: query
+        name: viewDuration
+        required: false
+        schema:
+          enum:
+          - 3s
+          - 5s
+          - 10s
+          - 30s
+          type: string
+        style: form
       - $ref: '#/components/parameters/filterBy_2'
         description: "Use this parameter to filter the API's response based on different\
           \ data dimensions. You can serialize filters in your query to receive more\
@@ -12841,7 +12885,10 @@ paths:
           \ on the browser used by the viewers. Response values can include `chrome`,\
           \ `firefox`, `edge`, `opera`.\n- `tag`: Returns analytics for videos using\
           \ this tag. This filter only accepts a single value and is case sensitive.\
-          \ Read more about tagging your videos [here](https://docs.api.video/vod/tags-metadata).\n"
+          \ Read more about tagging your videos [here](https://docs.api.video/vod/tags-metadata).\n\
+          - `referrer`: Filters data based on the URL where the view is originating\
+          \ from. Accepts an empty string as a value to filter view events where no\
+          \ referrer is available.\n"
         example: filterBy[country]=FR&filterBy[operatingSystem]=windows&filterBy[browser][]=firefox&filterBy[browser][]=chrome&filterBy[tag]=Cool
           videos
         explode: true
@@ -12923,6 +12970,19 @@ paths:
                 tagging your videos [here](https://docs.api.video/vod/tags-metadata).
               example: Cool videos
               type: string
+            referrer:
+              description: |-
+                Filters data based on the URL where the view is originating from. This filter parameter accepts an empty string to filter view events where no referrer is available.
+
+                - The API filters for exact matches. Include the trailing `/` characters if needed.
+                - The URLs you add must be URL encoded.
+              example:
+              - https%3A%2F%2Fmy-awesome-videos.com
+              items:
+                format: uri
+                maxLength: 2048
+                type: string
+              type: array
           type: object
           x-is-deep-object: true
         style: deepObject
@@ -12989,6 +13049,24 @@ paths:
                     status: 400
                     detail: This field was not expected.
                     name: from:2024-05-20T09:15:05+02:00
+                Referrer too long:
+                  description: Occurs when the value of `referrer` in your query is
+                    too long.
+                  value:
+                    type: https://docs.api.video/reference/request-invalid-query-parameter
+                    title: A query parameter is invalid.
+                    status: 400
+                    detail: This value should not contain more than 2048 characters.
+                    name: filterBy[referrer]
+                Invalid view duration:
+                  description: Occurs when the value of `viewDuration` is incorrect.
+                  value:
+                    type: https://docs.api.video/reference/request-invalid-query-parameter
+                    title: A query parameter is invalid.
+                    status: 400
+                    detail: This view duration is invalid. Use one of "3s", "5s",
+                      "10s", "30s".
+                    name: viewDuration
               schema:
                 $ref: '#/components/schemas/analytics-plays-400-error'
           description: Bad request error
@@ -13165,6 +13243,9 @@ paths:
           - `start` is the number of times playback was started.
           - `end` is the number of times playback has ended with the content watch until the end.
           - `impression` is the number of times your content has been loaded and was ready for playback.
+          - `ccv-peak` is the highest number of concurrent viewers in the timeframe of your request.
+          - `ccv-average` is the average number of concurrent viewers in the timeframe of your request.
+          - `view` is the total number of viewers until this point in time.
         explode: false
         in: path
         name: metric
@@ -13177,6 +13258,9 @@ paths:
           - start
           - end
           - impression
+          - ccv-peak
+          - ccv-average
+          - view
           type: string
         style: simple
       - description: "Use this path parameter to define a dimension for segmenting\
@@ -13196,7 +13280,10 @@ paths:
           \ based on the operating system used by the viewers. Response values can\
           \ include `windows`, `mac osx`, `android`, `ios`, `linux`.\n- `browser`:\
           \ Returns analytics based on the browser used by the viewers. Response values\
-          \ can include `chrome`, `firefox`, `edge`, `opera`.\n"
+          \ can include `chrome`, `firefox`, `edge`, `opera`.\n- `referrer`: Returns\
+          \ the URL where the view originates from, for example a website where the\
+          \ video is embedded. View events from Android and iOS return empty strings\
+          \ as the value for `referrer`.\n"
         explode: false
         in: path
         name: breakdown
@@ -13210,6 +13297,7 @@ paths:
           - device-type
           - operating-system
           - browser
+          - referrer
           type: string
         style: simple
       - description: |
@@ -13277,6 +13365,40 @@ paths:
           - desc
           type: string
         style: form
+      - description: "Use this query parameter to control how viewer data is counted:\n\
+          \n- `true` means that a single user watching multiple times counts as 1\
+          \ unique viewer\n- `false` means that all views count, even if from the\
+          \ same user.\n\nThe API accepts this parameter only when you use the `ccv-peak`,\
+          \ `ccv-average`, or `view` metric.          \n\nViewers are unique for 1\
+          \ day.\n\nThe API determines uniqueness based on a viewer's `user-agent`\
+          \ and IP address. This means that the API can filter viewers using multiple\
+          \ tabs to watch the same video multiple times, but cannot filter for viewers\
+          \ who use multiple browsers to watch the same content multiple times.\n"
+        example: true
+        explode: false
+        in: query
+        name: unique
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: "Use this query parameter to define how many seconds a view has\
+          \ to last to be counted in analytics data.\n\n- You can only use this parameter\
+          \ together with the `view` metric.\n- The accepted values are `3s`, `5s`,\
+          \ `10s`, and `30s`. \n- If you do not set this parameter, the API defaults\
+          \ to `5s`.\n"
+        explode: false
+        in: query
+        name: viewDuration
+        required: false
+        schema:
+          enum:
+          - 3s
+          - 5s
+          - 10s
+          - 30s
+          type: string
+        style: form
       - $ref: '#/components/parameters/filterBy_2'
         description: "Use this parameter to filter the API's response based on different\
           \ data dimensions. You can serialize filters in your query to receive more\
@@ -13303,7 +13425,10 @@ paths:
           \ on the browser used by the viewers. Response values can include `chrome`,\
           \ `firefox`, `edge`, `opera`.\n- `tag`: Returns analytics for videos using\
           \ this tag. This filter only accepts a single value and is case sensitive.\
-          \ Read more about tagging your videos [here](https://docs.api.video/vod/tags-metadata).\n"
+          \ Read more about tagging your videos [here](https://docs.api.video/vod/tags-metadata).\n\
+          - `referrer`: Filters data based on the URL where the view is originating\
+          \ from. Accepts an empty string as a value to filter view events where no\
+          \ referrer is available.\n"
         example: filterBy[country]=FR&filterBy[operatingSystem]=windows&filterBy[browser][]=firefox&filterBy[browser][]=chrome&filterBy[tag]=Cool
           videos
         explode: true
@@ -13385,6 +13510,19 @@ paths:
                 tagging your videos [here](https://docs.api.video/vod/tags-metadata).
               example: Cool videos
               type: string
+            referrer:
+              description: |-
+                Filters data based on the URL where the view is originating from. This filter parameter accepts an empty string to filter view events where no referrer is available.
+
+                - The API filters for exact matches. Include the trailing `/` characters if needed.
+                - The URLs you add must be URL encoded.
+              example:
+              - https%3A%2F%2Fmy-awesome-videos.com
+              items:
+                format: uri
+                maxLength: 2048
+                type: string
+              type: array
           type: object
           x-is-deep-object: true
         style: deepObject
@@ -13487,6 +13625,24 @@ paths:
                     status: 400
                     detail: This field was not expected.
                     name: from:2024-05-20T09:15:05+02:00
+                Referrer too long:
+                  description: Occurs when the value of `referrer` in your query is
+                    too long.
+                  value:
+                    type: https://docs.api.video/reference/request-invalid-query-parameter
+                    title: A query parameter is invalid.
+                    status: 400
+                    detail: This value should not contain more than 2048 characters.
+                    name: filterBy[referrer]
+                Invalid view duration:
+                  description: Occurs when the value of `viewDuration` is incorrect.
+                  value:
+                    type: https://docs.api.video/reference/request-invalid-query-parameter
+                    title: A query parameter is invalid.
+                    status: 400
+                    detail: This view duration is invalid. Use one of "3s", "5s",
+                      "10s", "30s".
+                    name: viewDuration
               schema:
                 $ref: '#/components/schemas/analytics-plays-400-error'
           description: Bad request error
@@ -13652,14 +13808,16 @@ paths:
         grouped by the time at which they occurred
       operationId: GET_metrics-over-time
       parameters:
-      - description: |
-          Use this path parameter to select a metric that you want analytics for.
-
-          - `play` is the number of times your content has been played.
-          - `play-rate` is the ratio that calculates the number of plays your content receives divided by its impressions.
-          - `start` is the number of times playback was started.
-          - `end` is the number of times playback has ended with the content watch until the end.
-          - `impression` is the number of times your content has been loaded and was ready for playback.
+      - description: "Use this path parameter to select a metric that you want analytics\
+          \ for.\n\n- `play` is the number of times your content has been played.\n\
+          - `play-rate` is the ratio that calculates the number of plays your content\
+          \ receives divided by its impressions.\n- `start` is the number of times\
+          \ playback was started.\n- `end` is the number of times playback has ended\
+          \ with the content watch until the end.\n- `impression` is the number of\
+          \ times your content has been loaded and was ready for playback.\n- `ccv-peak`\
+          \ is the highest number of concurrent viewers in the timeframe of your request.\n\
+          - `ccv-average` is the average number of concurrent viewers in the timeframe\
+          \ of your request.\n- `view` is the total number of viewers. \n"
         explode: false
         in: path
         name: metric
@@ -13671,6 +13829,9 @@ paths:
           - start
           - end
           - impression
+          - ccv-peak
+          - ccv-average
+          - view
           type: string
         style: simple
       - description: |
@@ -13703,11 +13864,10 @@ paths:
           type: string
         style: form
       - description: |
-          Use this query parameter to define how granularity of the data. Possible values: `hour`, `day`.
-
-          - Default: If no interval specified and the period (different between from and to) ≤ 2 days then hour, otherwise day.
+          Use this query parameter to define the granularity of the data. Possible values: `minute`, `hour`, `day`.
 
           - If you do not set a value for `interval`, and the period you set using the `from` and `to` parameters is less than or equals to 2 days, then the default assigned value is `hour`. Otherwise the API sets it to `day`.
+          - When you set `minute` as interval, the timeframe you define with the `from` and `to` parameters must be less than 60 minutes.
         example: hour
         explode: false
         in: query
@@ -13715,6 +13875,7 @@ paths:
         required: false
         schema:
           enum:
+          - minute
           - hour
           - day
           type: string
@@ -13755,6 +13916,40 @@ paths:
           - desc
           type: string
         style: form
+      - description: "Use this query parameter to control how viewer data is counted:\n\
+          \n- `true` means that a single user watching multiple times counts as 1\
+          \ unique viewer\n- `false` means that all views count, even if from the\
+          \ same user.\n\nThe API accepts this parameter only when you use the `ccv-peak`,\
+          \ `ccv-average`, or `view` metric.          \n\nViewers are unique for 1\
+          \ day.\n\nThe API determines uniqueness based on a viewer's `user-agent`\
+          \ and IP address. This means that the API can filter viewers using multiple\
+          \ tabs to watch the same video multiple times, but cannot filter for viewers\
+          \ who use multiple browsers to watch the same content multiple times.\n"
+        example: true
+        explode: false
+        in: query
+        name: unique
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: "Use this query parameter to define how many seconds a view has\
+          \ to last to be counted in analytics data.\n\n- You can only use this parameter\
+          \ together with the `view` metric.\n- The accepted values are `3s`, `5s`,\
+          \ `10s`, and `30s`. \n- If you do not set this parameter, the API defaults\
+          \ to `5s`.\n"
+        explode: false
+        in: query
+        name: viewDuration
+        required: false
+        schema:
+          enum:
+          - 3s
+          - 5s
+          - 10s
+          - 30s
+          type: string
+        style: form
       - $ref: '#/components/parameters/filterBy_2'
         description: "Use this parameter to filter the API's response based on different\
           \ data dimensions. You can serialize filters in your query to receive more\
@@ -13781,7 +13976,10 @@ paths:
           \ on the browser used by the viewers. Response values can include `chrome`,\
           \ `firefox`, `edge`, `opera`.\n- `tag`: Returns analytics for videos using\
           \ this tag. This filter only accepts a single value and is case sensitive.\
-          \ Read more about tagging your videos [here](https://docs.api.video/vod/tags-metadata).\n"
+          \ Read more about tagging your videos [here](https://docs.api.video/vod/tags-metadata).\n\
+          - `referrer`: Filters data based on the URL where the view is originating\
+          \ from. Accepts an empty string as a value to filter view events where no\
+          \ referrer is available.\n"
         example: filterBy[country]=FR&filterBy[operatingSystem]=windows&filterBy[browser][]=firefox&filterBy[browser][]=chrome&filterBy[tag]=Cool
           videos
         explode: true
@@ -13863,6 +14061,19 @@ paths:
                 tagging your videos [here](https://docs.api.video/vod/tags-metadata).
               example: Cool videos
               type: string
+            referrer:
+              description: |-
+                Filters data based on the URL where the view is originating from. This filter parameter accepts an empty string to filter view events where no referrer is available.
+
+                - The API filters for exact matches. Include the trailing `/` characters if needed.
+                - The URLs you add must be URL encoded.
+              example:
+              - https%3A%2F%2Fmy-awesome-videos.com
+              items:
+                format: uri
+                maxLength: 2048
+                type: string
+              type: array
           type: object
           x-is-deep-object: true
         style: deepObject
@@ -13969,6 +14180,44 @@ paths:
                     status: 400
                     detail: This field was not expected.
                     name: from:2024-05-20T09:15:05+02:00
+                Invalid interval:
+                  description: Occurs when the value you set for `interval` is not
+                    `minute`, `hour`, or `day`.
+                  value:
+                    type: https://docs.api.video/reference/request-invalid-query-parameter
+                    title: A query parameter is invalid.
+                    status: 400
+                    detail: This interval is invalid. Use one of "minute", "hour",
+                      "day".
+                    name: interval
+                Timeframe does not match interval:
+                  description: Occurs when you set `minute` as interval, and a timeframe
+                    that is longer than 60 minutes.
+                  value:
+                    type: https://docs.api.video/reference/request-invalid-query-parameter
+                    title: A query parameter is invalid.
+                    status: 400
+                    detail: This interval cannot be used with a timeframe over 60
+                      minutes.
+                    name: interval
+                Referrer too long:
+                  description: Occurs when the value of `referrer` in your query is
+                    too long.
+                  value:
+                    type: https://docs.api.video/reference/request-invalid-query-parameter
+                    title: A query parameter is invalid.
+                    status: 400
+                    detail: This value should not contain more than 2048 characters.
+                    name: filterBy[referrer]
+                Invalid view duration:
+                  description: Occurs when the value of `viewDuration` is incorrect.
+                  value:
+                    type: https://docs.api.video/reference/request-invalid-query-parameter
+                    title: A query parameter is invalid.
+                    status: 400
+                    detail: This view duration is invalid. Use one of "3s", "5s",
+                      "10s", "30s".
+                    name: viewDuration
               schema:
                 $ref: '#/components/schemas/analytics-plays-400-error'
           description: Bad request error
@@ -15102,7 +15351,10 @@ components:
         \ the browser used by the viewers. Response values can include `chrome`, `firefox`,\
         \ `edge`, `opera`.\n- `tag`: Returns analytics for videos using this tag.\
         \ This filter only accepts a single value and is case sensitive. Read more\
-        \ about tagging your videos [here](https://docs.api.video/vod/tags-metadata).\n"
+        \ about tagging your videos [here](https://docs.api.video/vod/tags-metadata).\n\
+        - `referrer`: Filters data based on the URL where the view is originating\
+        \ from. Accepts an empty string as a value to filter view events where no\
+        \ referrer is available.\n"
       example: filterBy[country]=FR&filterBy[operatingSystem]=windows&filterBy[browser][]=firefox&filterBy[browser][]=chrome&filterBy[tag]=Cool
         videos
       explode: true
@@ -15183,6 +15435,19 @@ components:
               your videos [here](https://docs.api.video/vod/tags-metadata).
             example: Cool videos
             type: string
+          referrer:
+            description: |-
+              Filters data based on the URL where the view is originating from. This filter parameter accepts an empty string to filter view events where no referrer is available.
+
+              - The API filters for exact matches. Include the trailing `/` characters if needed.
+              - The URLs you add must be URL encoded.
+            example:
+            - https%3A%2F%2Fmy-awesome-videos.com
+            items:
+              format: uri
+              maxLength: 2048
+              type: string
+            type: array
         type: object
         x-is-deep-object: true
       style: deepObject
@@ -17437,7 +17702,7 @@ components:
         context:
           $ref: '#/components/schemas/analytics_metrics_over_time_response_context'
         data:
-          description: Returns an array of metrics and the timestamps .
+          description: Returns an array of metrics and the timestamps.
           items:
             $ref: '#/components/schemas/analytics_metrics_over_time_response_data'
           type: array
@@ -17871,6 +18136,19 @@ components:
             your videos [here](https://docs.api.video/vod/tags-metadata).
           example: Cool videos
           type: string
+        referrer:
+          description: |-
+            Filters data based on the URL where the view is originating from. This filter parameter accepts an empty string to filter view events where no referrer is available.
+
+            - The API filters for exact matches. Include the trailing `/` characters if needed.
+            - The URLs you add must be URL encoded.
+          example:
+          - https%3A%2F%2Fmy-awesome-videos.com
+          items:
+            format: uri
+            maxLength: 2048
+            type: string
+          type: array
       type: object
       x-is-deep-object: true
     filterBy_1:
@@ -17947,6 +18225,19 @@ components:
             your videos [here](https://docs.api.video/vod/tags-metadata).
           example: Cool videos
           type: string
+        referrer:
+          description: |-
+            Filters data based on the URL where the view is originating from. This filter parameter accepts an empty string to filter view events where no referrer is available.
+
+            - The API filters for exact matches. Include the trailing `/` characters if needed.
+            - The URLs you add must be URL encoded.
+          example:
+          - https%3A%2F%2Fmy-awesome-videos.com
+          items:
+            format: uri
+            maxLength: 2048
+            type: string
+          type: array
       type: object
       x-is-deep-object: true
     filterBy_2:
@@ -18023,6 +18314,19 @@ components:
             your videos [here](https://docs.api.video/vod/tags-metadata).
           example: Cool videos
           type: string
+        referrer:
+          description: |-
+            Filters data based on the URL where the view is originating from. This filter parameter accepts an empty string to filter view events where no referrer is available.
+
+            - The API filters for exact matches. Include the trailing `/` characters if needed.
+            - The URLs you add must be URL encoded.
+          example:
+          - https%3A%2F%2Fmy-awesome-videos.com
+          items:
+            format: uri
+            maxLength: 2048
+            type: string
+          type: array
       type: object
       x-is-deep-object: true
     list_tags_response_data:
@@ -18080,7 +18384,7 @@ components:
         aggregation: count
       properties:
         metric:
-          description: Returns the metric you selected.
+          description: Returns the metric and relevant parameters you selected.
           enum:
           - play
           - start
@@ -18088,6 +18392,17 @@ components:
           - impression
           - impression-time
           - watch-time
+          - ccv
+          - unique-ccv
+          - view-3
+          - view-5
+          - view-10
+          - view-30
+          - unique-view
+          - unique-view-3
+          - unique-view-5
+          - unique-view-10
+          - unique-view-30
           example: impression
           type: string
         aggregation:
@@ -18112,13 +18427,26 @@ components:
         breakdown: country
       properties:
         metric:
-          description: Returns the metric you selected.
+          description: Returns the metric and relevant parameters you selected.
           enum:
           - play
           - play-rate
           - start
           - end
           - impression
+          - ccv-average
+          - ccv-peak
+          - unique-ccv-average
+          - unique-ccv-peak
+          - view-3
+          - view-5
+          - view-10
+          - view-30
+          - unique-view
+          - unique-view-3
+          - unique-view-5
+          - unique-view-10
+          - unique-view-30
           example: impression
           type: string
         breakdown:
@@ -18160,18 +18488,32 @@ components:
         interval: day
       properties:
         metric:
-          description: Returns the metric you selected.
+          description: Returns the metric and relevant parameters you selected.
           enum:
           - play
           - play-rate
           - start
           - end
           - impression
+          - ccv-average
+          - ccv-peak
+          - unique-ccv-average
+          - unique-ccv-peak
+          - view-3
+          - view-5
+          - view-10
+          - view-30
+          - unique-view
+          - unique-view-3
+          - unique-view-5
+          - unique-view-10
+          - unique-view-30
           example: impression
           type: string
         interval:
           description: Returns the interval you selected.
           enum:
+          - minute
           - hour
           - day
           example: day

@@ -5,7 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Context** | [**AnalyticsMetricsOverTimeResponseContext**](AnalyticsMetricsOverTimeResponseContext.md) |  | 
-**Data** | [**[]AnalyticsMetricsOverTimeResponseData**](AnalyticsMetricsOverTimeResponseData.md) | Returns an array of metrics and the timestamps . | 
+**Data** | [**[]AnalyticsMetricsOverTimeResponseData**](AnalyticsMetricsOverTimeResponseData.md) | Returns an array of metrics and the timestamps. | 
 **Pagination** | [**Pagination**](Pagination.md) |  | 
 
 ## Methods

@@ -16,7 +16,7 @@ import (
 
 // AnalyticsAggregatedMetricsResponseContext struct for AnalyticsAggregatedMetricsResponseContext
 type AnalyticsAggregatedMetricsResponseContext struct {
-	// Returns the metric you selected.
+	// Returns the metric and relevant parameters you selected.
 	Metric *string `json:"metric,omitempty"`
 	// Returns the aggregation you selected.
 	Aggregation *string                                             `json:"aggregation,omitempty"`
