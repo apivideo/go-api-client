@@ -31,6 +31,8 @@ type FilterBy struct {
 	Browser *[]string `json:"browser,omitempty"`
 	// Returns analytics for videos using this tag. This filter only accepts a single value and is case sensitive. Read more about tagging your videos [here](https://docs.api.video/vod/tags-metadata).
 	Tag *string `json:"tag,omitempty"`
+	// Filters data based on the URL where the view is originating from. This filter parameter accepts an empty string to filter view events where no referrer is available.  - The API filters for exact matches. Include the trailing `/` characters if needed. - The URLs you add must be URL encoded.
+	Referrer *[]string `json:"referrer,omitempty"`
 }
 
 // NewFilterBy instantiates a new FilterBy object
@@ -304,6 +306,38 @@ func (o *FilterBy) HasTag() bool {
 // SetTag gets a reference to the given string and assigns it to the Tag field.
 func (o *FilterBy) SetTag(v string) {
 	o.Tag = &v
+}
+
+// GetReferrer returns the Referrer field value if set, zero value otherwise.
+func (o *FilterBy) GetReferrer() []string {
+	if o == nil || o.Referrer == nil {
+		var ret []string
+		return ret
+	}
+	return *o.Referrer
+}
+
+// GetReferrerOk returns a tuple with the Referrer field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *FilterBy) GetReferrerOk() (*[]string, bool) {
+	if o == nil || o.Referrer == nil {
+		return nil, false
+	}
+	return o.Referrer, true
+}
+
+// HasReferrer returns a boolean if a field has been set.
+func (o *FilterBy) HasReferrer() bool {
+	if o != nil && o.Referrer != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetReferrer gets a reference to the given []string and assigns it to the Referrer field.
+func (o *FilterBy) SetReferrer(v []string) {
+	o.Referrer = &v
 }
 
 type NullableFilterBy struct {

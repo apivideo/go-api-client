@@ -16,7 +16,7 @@ import (
 
 // AnalyticsMetricsBreakdownResponseContext struct for AnalyticsMetricsBreakdownResponseContext
 type AnalyticsMetricsBreakdownResponseContext struct {
-	// Returns the metric you selected.
+	// Returns the metric and relevant parameters you selected.
 	Metric *string `json:"metric,omitempty"`
 	// Returns the dimension you selected.
 	Breakdown *string                                             `json:"breakdown,omitempty"`

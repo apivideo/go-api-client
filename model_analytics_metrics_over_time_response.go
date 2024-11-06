@@ -17,7 +17,7 @@ import (
 // AnalyticsMetricsOverTimeResponse struct for AnalyticsMetricsOverTimeResponse
 type AnalyticsMetricsOverTimeResponse struct {
 	Context AnalyticsMetricsOverTimeResponseContext `json:"context"`
-	// Returns an array of metrics and the timestamps .
+	// Returns an array of metrics and the timestamps.
 	Data       []AnalyticsMetricsOverTimeResponseData `json:"data"`
 	Pagination Pagination                             `json:"pagination"`
 }

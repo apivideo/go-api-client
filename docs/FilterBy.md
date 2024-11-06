@@ -12,6 +12,7 @@ Name | Type | Description | Notes
 **OperatingSystem** | Pointer to **[]string** | Returns analytics based on the operating system used by the viewers. Response values can include &#x60;windows&#x60;, &#x60;mac osx&#x60;, &#x60;android&#x60;, &#x60;ios&#x60;, &#x60;linux&#x60;. | [optional] 
 **Browser** | Pointer to **[]string** | Returns analytics based on the browser used by the viewers. Response values can include &#x60;chrome&#x60;, &#x60;firefox&#x60;, &#x60;edge&#x60;, &#x60;opera&#x60;. | [optional] 
 **Tag** | Pointer to **string** | Returns analytics for videos using this tag. This filter only accepts a single value and is case sensitive. Read more about tagging your videos [here](https://docs.api.video/vod/tags-metadata). | [optional] 
+**Referrer** | Pointer to **[]string** | Filters data based on the URL where the view is originating from. This filter parameter accepts an empty string to filter view events where no referrer is available.  - The API filters for exact matches. Include the trailing &#x60;/&#x60; characters if needed. - The URLs you add must be URL encoded. | [optional] 
 
 ## Methods
 
@@ -231,6 +232,31 @@ SetTag sets Tag field to given value.
 `func (o *FilterBy) HasTag() bool`
 
 HasTag returns a boolean if a field has been set.
+
+### GetReferrer
+
+`func (o *FilterBy) GetReferrer() []string`
+
+GetReferrer returns the Referrer field if non-nil, zero value otherwise.
+
+### GetReferrerOk
+
+`func (o *FilterBy) GetReferrerOk() (*[]string, bool)`
+
+GetReferrerOk returns a tuple with the Referrer field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetReferrer
+
+`func (o *FilterBy) SetReferrer(v []string)`
+
+SetReferrer sets Referrer field to given value.
+
+### HasReferrer
+
+`func (o *FilterBy) HasReferrer() bool`
+
+HasReferrer returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
