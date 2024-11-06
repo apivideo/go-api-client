@@ -16,8 +16,6 @@ import (
 
 // SummaryUpdatePayload struct for SummaryUpdatePayload
 type SummaryUpdatePayload struct {
-	// A video title, based on the contents of the video.
-	Title *string `json:"title,omitempty"`
 	// A short outline of the contents of the video.
 	Abstract *string `json:"abstract,omitempty"`
 	// A list of 3 key points from the video, in chronological order.
@@ -39,38 +37,6 @@ func NewSummaryUpdatePayload() *SummaryUpdatePayload {
 func NewSummaryUpdatePayloadWithDefaults() *SummaryUpdatePayload {
 	this := SummaryUpdatePayload{}
 	return &this
-}
-
-// GetTitle returns the Title field value if set, zero value otherwise.
-func (o *SummaryUpdatePayload) GetTitle() string {
-	if o == nil || o.Title == nil {
-		var ret string
-		return ret
-	}
-	return *o.Title
-}
-
-// GetTitleOk returns a tuple with the Title field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *SummaryUpdatePayload) GetTitleOk() (*string, bool) {
-	if o == nil || o.Title == nil {
-		return nil, false
-	}
-	return o.Title, true
-}
-
-// HasTitle returns a boolean if a field has been set.
-func (o *SummaryUpdatePayload) HasTitle() bool {
-	if o != nil && o.Title != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetTitle gets a reference to the given string and assigns it to the Title field.
-func (o *SummaryUpdatePayload) SetTitle(v string) {
-	o.Title = &v
 }
 
 // GetAbstract returns the Abstract field value if set, zero value otherwise.

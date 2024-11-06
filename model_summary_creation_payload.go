@@ -20,6 +20,8 @@ type SummaryCreationPayload struct {
 	VideoId string `json:"videoId"`
 	// Use this parameter to define how the API generates the summary. The only allowed value is `auto`, which means that the API generates a summary automatically.  If you do not set this parameter, **the API will not generate a summary automatically**.  In this case, `sourceStatus` will return `missing`, and you have to manually add a summary using the `PATCH /summaries/{summaryId}/source` endpoint operation.
 	Origin *string `json:"origin,omitempty"`
+	// Use this parameter to define the elements of a summary that you want to generate. If you do not define this parameter, the API generates a full summary with all attributes.
+	Attributes *[]string `json:"attributes,omitempty"`
 }
 
 // NewSummaryCreationPayload instantiates a new SummaryCreationPayload object
@@ -94,6 +96,38 @@ func (o *SummaryCreationPayload) HasOrigin() bool {
 // SetOrigin gets a reference to the given string and assigns it to the Origin field.
 func (o *SummaryCreationPayload) SetOrigin(v string) {
 	o.Origin = &v
+}
+
+// GetAttributes returns the Attributes field value if set, zero value otherwise.
+func (o *SummaryCreationPayload) GetAttributes() []string {
+	if o == nil || o.Attributes == nil {
+		var ret []string
+		return ret
+	}
+	return *o.Attributes
+}
+
+// GetAttributesOk returns a tuple with the Attributes field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SummaryCreationPayload) GetAttributesOk() (*[]string, bool) {
+	if o == nil || o.Attributes == nil {
+		return nil, false
+	}
+	return o.Attributes, true
+}
+
+// HasAttributes returns a boolean if a field has been set.
+func (o *SummaryCreationPayload) HasAttributes() bool {
+	if o != nil && o.Attributes != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetAttributes gets a reference to the given []string and assigns it to the Attributes field.
+func (o *SummaryCreationPayload) SetAttributes(v []string) {
+	o.Attributes = &v
 }
 
 type NullableSummaryCreationPayload struct {

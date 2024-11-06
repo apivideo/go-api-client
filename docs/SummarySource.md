@@ -4,7 +4,6 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Title** | Pointer to **string** | A video title, based on the contents of the video. | [optional] 
 **Abstract** | Pointer to **string** | A short outline of the contents of the video. The length of an &#x60;abstract&#x60; depends on the amount of content in a video that can be transcribed. The API condenses the contents into minimum 20, maximum 300 words. | [optional] 
 **Takeaways** | Pointer to **[]string** | A list of 3 key points from the video, in chronological order. | [optional] 
 
@@ -26,31 +25,6 @@ will change when the set of required properties is changed
 NewSummarySourceWithDefaults instantiates a new SummarySource object
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
-
-### GetTitle
-
-`func (o *SummarySource) GetTitle() string`
-
-GetTitle returns the Title field if non-nil, zero value otherwise.
-
-### GetTitleOk
-
-`func (o *SummarySource) GetTitleOk() (*string, bool)`
-
-GetTitleOk returns a tuple with the Title field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetTitle
-
-`func (o *SummarySource) SetTitle(v string)`
-
-SetTitle sets Title field to given value.
-
-### HasTitle
-
-`func (o *SummarySource) HasTitle() bool`
-
-HasTitle returns a boolean if a field has been set.
 
 ### GetAbstract
 
