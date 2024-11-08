@@ -42,6 +42,8 @@ type VideoCreationPayload struct {
 	Transcript *bool `json:"transcript,omitempty"`
 	// Use this parameter to enable summarization. We recommend using this parameter together with `transcript: true`.  - When `true`, the API generates a summary for the video, based on the transcription. - The default value is `false`. - If you define a video language using the `language` parameter, the API uses that language to summarize the video. If you do not define a language, the API detects it based on the video.
 	TranscriptSummary *bool `json:"transcriptSummary,omitempty"`
+	// Use this parameter to define the elements of a summary that you want to generate. If you do not define this parameter, the API generates a full summary with all attributes.
+	TranscriptSummaryAttributes *[]string `json:"transcriptSummaryAttributes,omitempty"`
 }
 
 // NewVideoCreationPayload instantiates a new VideoCreationPayload object
@@ -523,6 +525,38 @@ func (o *VideoCreationPayload) HasTranscriptSummary() bool {
 // SetTranscriptSummary gets a reference to the given bool and assigns it to the TranscriptSummary field.
 func (o *VideoCreationPayload) SetTranscriptSummary(v bool) {
 	o.TranscriptSummary = &v
+}
+
+// GetTranscriptSummaryAttributes returns the TranscriptSummaryAttributes field value if set, zero value otherwise.
+func (o *VideoCreationPayload) GetTranscriptSummaryAttributes() []string {
+	if o == nil || o.TranscriptSummaryAttributes == nil {
+		var ret []string
+		return ret
+	}
+	return *o.TranscriptSummaryAttributes
+}
+
+// GetTranscriptSummaryAttributesOk returns a tuple with the TranscriptSummaryAttributes field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *VideoCreationPayload) GetTranscriptSummaryAttributesOk() (*[]string, bool) {
+	if o == nil || o.TranscriptSummaryAttributes == nil {
+		return nil, false
+	}
+	return o.TranscriptSummaryAttributes, true
+}
+
+// HasTranscriptSummaryAttributes returns a boolean if a field has been set.
+func (o *VideoCreationPayload) HasTranscriptSummaryAttributes() bool {
+	if o != nil && o.TranscriptSummaryAttributes != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetTranscriptSummaryAttributes gets a reference to the given []string and assigns it to the TranscriptSummaryAttributes field.
+func (o *VideoCreationPayload) SetTranscriptSummaryAttributes(v []string) {
+	o.TranscriptSummaryAttributes = &v
 }
 
 type NullableVideoCreationPayload struct {

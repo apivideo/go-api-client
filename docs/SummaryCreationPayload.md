@@ -6,6 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **VideoId** | **string** | Create a summary of a video using the video ID. | 
 **Origin** | Pointer to **string** | Use this parameter to define how the API generates the summary. The only allowed value is &#x60;auto&#x60;, which means that the API generates a summary automatically.  If you do not set this parameter, **the API will not generate a summary automatically**.  In this case, &#x60;sourceStatus&#x60; will return &#x60;missing&#x60;, and you have to manually add a summary using the &#x60;PATCH /summaries/{summaryId}/source&#x60; endpoint operation. | [optional] 
+**Attributes** | Pointer to **[]string** | Use this parameter to define the elements of a summary that you want to generate. If you do not define this parameter, the API generates a full summary with all attributes. | [optional] 
 
 ## Methods
 
@@ -70,6 +71,31 @@ SetOrigin sets Origin field to given value.
 `func (o *SummaryCreationPayload) HasOrigin() bool`
 
 HasOrigin returns a boolean if a field has been set.
+
+### GetAttributes
+
+`func (o *SummaryCreationPayload) GetAttributes() []string`
+
+GetAttributes returns the Attributes field if non-nil, zero value otherwise.
+
+### GetAttributesOk
+
+`func (o *SummaryCreationPayload) GetAttributesOk() (*[]string, bool)`
+
+GetAttributesOk returns a tuple with the Attributes field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetAttributes
+
+`func (o *SummaryCreationPayload) SetAttributes(v []string)`
+
+SetAttributes sets Attributes field to given value.
+
+### HasAttributes
+
+`func (o *SummaryCreationPayload) HasAttributes() bool`
+
+HasAttributes returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

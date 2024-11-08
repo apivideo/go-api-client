@@ -152,7 +152,7 @@ type SummariesService struct {
 
 /*
  * Create Generate video summary
- * Generate a title, abstract, and key takeaways for a video.
+ * Generate an abstract and key takeaways for a video.
 
  * @return SummariesApiCreateRequest
  */
@@ -165,7 +165,7 @@ func (s *SummariesService) Create(summaryCreationPayload SummaryCreationPayload)
 
 /*
  * Create Generate video summary
- * Generate a title, abstract, and key takeaways for a video.
+ * Generate an abstract and key takeaways for a video.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return SummariesApiCreateRequest
  */
@@ -199,7 +199,7 @@ func (s *SummariesService) CreateWithContext(ctx context.Context, summaryCreatio
 
 /*
  * Update Update summary details
- * Update details for a summary. Note that this operation is only allowed for summary objects where `sourceStatus` is `missing`.
+ * Update details for a summary.
 
  * @param summaryId The unique identifier of the summary source you want to update.
  * @return SummariesApiUpdateRequest
@@ -213,7 +213,7 @@ func (s *SummariesService) Update(summaryId string, summaryUpdatePayload Summary
 
 /*
  * Update Update summary details
- * Update details for a summary. Note that this operation is only allowed for summary objects where `sourceStatus` is `missing`.
+ * Update details for a summary.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param summaryId The unique identifier of the summary source you want to update.
  * @return SummariesApiUpdateRequest
