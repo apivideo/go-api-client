@@ -20,7 +20,7 @@ type SummaryCreationPayload struct {
 	VideoId string `json:"videoId"`
 	// Use this parameter to define how the API generates the summary. The only allowed value is `auto`, which means that the API generates a summary automatically.  If you do not set this parameter, **the API will not generate a summary automatically**.  In this case, `sourceStatus` will return `missing`, and you have to manually add a summary using the `PATCH /summaries/{summaryId}/source` endpoint operation.
 	Origin *string `json:"origin,omitempty"`
-	// Use this parameter to define the elements of a summary that you want to generate. If you do not define this parameter, the API generates a full summary with all attributes.
+	// Use this parameter to define the elements of a summary that you want to generate. If you do not define this parameter, the API generates a full summary with all attributes. The possible values are `abstract` and `takeaways`.
 	Attributes *[]string `json:"attributes,omitempty"`
 }
 

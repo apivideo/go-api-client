@@ -42,7 +42,7 @@ type VideoCreationPayload struct {
 	Transcript *bool `json:"transcript,omitempty"`
 	// Use this parameter to enable summarization. We recommend using this parameter together with `transcript: true`.  - When `true`, the API generates a summary for the video, based on the transcription. - The default value is `false`. - If you define a video language using the `language` parameter, the API uses that language to summarize the video. If you do not define a language, the API detects it based on the video.
 	TranscriptSummary *bool `json:"transcriptSummary,omitempty"`
-	// Use this parameter to define the elements of a summary that you want to generate. If you do not define this parameter, the API generates a full summary with all attributes.
+	// Use this parameter to define the elements of a summary that you want to generate. If you do not define this parameter, the API generates a full summary with all attributes. The possible values are `abstract` and `takeaways`.
 	TranscriptSummaryAttributes *[]string `json:"transcriptSummaryAttributes,omitempty"`
 }
 
