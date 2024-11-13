@@ -14628,17 +14628,20 @@ paths:
             // Documentation: https://github.com/apivideo/api.video-swift-client/blob/main/docs/WebhooksAPI.md#list
     post:
       description: "Webhooks can push notifications to your server, rather than polling\
-        \ api.video for changes. We currently offer four events: \n* ```video.encoding.quality.completed```\
+        \ api.video for changes. We currently offer four events: \n* `video.encoding.quality.completed`\
         \ Occurs when a new video is uploaded into your account, it will be encoded\
         \ into several different HLS and mp4 qualities. When each version is encoded,\
         \ your webhook will get a notification.  It will look like ```{ \"type\":\
         \ \"video.encoding.quality.completed\", \"emittedAt\": \"2021-01-29T16:46:25.217+01:00\"\
         , \"videoId\": \"viXXXXXXXX\", \"encoding\": \"hls\", \"quality\": \"720p\"\
-        } ```. This request says that the 720p HLS encoding was completed.\n* ```live-stream.broadcast.started```\
+        } ```. This request says that the 720p HLS encoding was completed.\n* `live-stream.broadcast.started`\
         \  When a live stream begins broadcasting, the broadcasting parameter changes\
-        \ from false to true, and this webhook fires.\n* ```live-stream.broadcast.ended```\
-        \  This event fires when a live stream has finished broadcasting.\n* ```video.source.recorded```\
-        \  This event occurs when a live stream is recorded and submitted for encoding."
+        \ from false to true, and this webhook fires.\n* `live-stream.broadcast.ended`\
+        \  This event fires when a live stream has finished broadcasting.\n* `video.source.recorded`\
+        \  This event occurs when a live stream is recorded and submitted for encoding.\n\
+        * `video.caption.generated`  This event occurs when an automatic caption has\
+        \ been generated.\n* `video.summary.generated`  This event occurs when an\
+        \ automatic summary has been generated."
       operationId: POST-webhooks
       requestBody:
         content:
@@ -16280,6 +16283,13 @@ components:
             occur, the API triggers a webhook call to the URL you provided.
           example: '["video.encoding.quality.completed"]'
           items:
+            enum:
+            - live-stream.broadcast.started
+            - live-stream.broadcast.ended
+            - video.source.recorded
+            - video.encoding.quality.completed
+            - video.caption.generated
+            - video.summary.generated
             type: string
           type: array
         url:
@@ -17807,15 +17817,17 @@ components:
         url: http://clientnotificationserver.com/notif?myquery=query
       properties:
         events:
-          description: |-
-            A list of the webhooks that you are subscribing to. There are Currently four webhook options:
-            * ```video.encoding.quality.completed```  Occurs when a new video is uploaded into your account, it will be encoded into several different HLS and mp4 qualities. When each version is encoded, your webhook will get a notification.  It will look like ```{ \"type\": \"video.encoding.quality.completed\", \"emittedAt\": \"2021-01-29T16:46:25.217+01:00\", \"videoId\": \"viXXXXXXXX\", \"encoding\": \"hls\", \"quality\": \"720p\"} ```. This request says that the 720p HLS encoding was completed.
-            * ```live-stream.broadcast.started```  When a live stream begins broadcasting, the broadcasting parameter changes from false to true, and this webhook fires.
-            * ```live-stream.broadcast.ended```  This event fires when a live stream has finished broadcasting.
-            * ```video.source.recorded```  Occurs when a live stream is recorded and submitted for encoding.
+          description: An array of webhook events that you want to subscribe to.
           example:
           - video.encoding.quality.completed
           items:
+            enum:
+            - live-stream.broadcast.started
+            - live-stream.broadcast.ended
+            - video.source.recorded
+            - video.encoding.quality.completed
+            - video.caption.generated
+            - video.summary.generated
             type: string
           type: array
         url:
@@ -18810,6 +18822,155 @@ x-webhooks:
                   - 720p
                   - 1080p
                   example: 1080p
+      responses:
+        "202":
+          summary: Accepted
+          description: Your webhook server may return this response to api.video to
+            signal that the webhook is accepted.
+  video.caption.generated:
+    post:
+      tags:
+      - Webhooks
+      summary: Video caption generated
+      description: This webhook triggers when the API finishes generating a caption
+        for a video.
+      operationId: POST-webhooks
+      parameters:
+      - in: header
+        name: X-Api-Video-WebhookID
+        schema:
+          type: string
+        description: The unique ID of your webhook.
+        required: true
+      - in: header
+        name: X-Api-Video-Signature
+        schema:
+          type: string
+        description: The webhook's body encrypted using the webhook's signature secret,
+          in HMAC SHA256. Use this hash to verify that api.video is the origin of
+          this webhook notification.
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  description: The name of the webhook event that occurred.
+                  example: video.caption.generated
+                emittedAt:
+                  description: Returns the date-time when the webhook event occurred.
+                  type: string
+                  format: date-time
+                  example: 2024-08-151T10:18:47+00:00
+                videoId:
+                  description: The ID of the video for which the caption was generated.
+                  type: string
+                  example: vi4blUQJFrYWbaG44NCh1234
+                captionId:
+                  description: The ID of the caption that was generated.
+                  type: string
+                  example: caption_1CHAfLFHT5B5EV4vzT1234
+                generationMode:
+                  description: Returns the method used to generate the caption. `transcript`
+                    means that the caption was generated based on the transcription
+                    of the video. Learn more about transcripts [here](https://docs.api.video/vod/generate-transcripts).
+                  type: string
+                  enum:
+                  - transcript
+                  example: transcript
+                language:
+                  description: Returns the language of the captions in [IETF language
+                    tag](https://en.wikipedia.org/wiki/IETF_language_tag) format.
+                  example: en
+                  type: string
+                  enum:
+                  - ar
+                  - ca
+                  - cs
+                  - da
+                  - de
+                  - el
+                  - en
+                  - es
+                  - fa
+                  - fi
+                  - fr
+                  - he
+                  - hi
+                  - hr
+                  - hu
+                  - it
+                  - ja
+                  - ko
+                  - ml
+                  - nl
+                  - nn
+                  - false
+                  - pl
+                  - pt
+                  - ru
+                  - sk
+                  - sl
+                  - te
+                  - tr
+                  - uk
+                  - ur
+                  - vi
+                  - zh
+      responses:
+        "202":
+          summary: Accepted
+          description: Your webhook server may return this response to api.video to
+            signal that the webhook is accepted.
+  video.summary.generated:
+    post:
+      tags:
+      - Webhooks
+      summary: Video summary generated
+      description: This webhook triggers when the API finishes generating a summary
+        for a video.
+      operationId: POST-webhooks
+      parameters:
+      - in: header
+        name: X-Api-Video-WebhookID
+        schema:
+          type: string
+        description: The unique ID of your webhook.
+        required: true
+      - in: header
+        name: X-Api-Video-Signature
+        schema:
+          type: string
+        description: The webhook's body encrypted using the webhook's signature secret,
+          in HMAC SHA256. Use this hash to verify that api.video is the origin of
+          this webhook notification.
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  description: The name of the webhook event that occurred.
+                  example: video.caption.generated
+                emittedAt:
+                  description: Returns the date-time when the webhook event occurred.
+                  type: string
+                  format: date-time
+                  example: 2024-08-151T10:18:47+00:00
+                videoId:
+                  description: The ID of the video for which the summary was generated.
+                  type: string
+                  example: vi4blUQJFrYWbaG44NCh1234
+                summaryId:
+                  description: The ID of the summary that was generated.
+                  type: string
+                  example: summary_1CGyYoB9XCgBk4iQna8ocT
       responses:
         "202":
           summary: Accepted

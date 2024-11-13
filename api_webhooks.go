@@ -117,13 +117,17 @@ type WebhooksService struct {
  * Create Create Webhook
  * Webhooks can push notifications to your server, rather than polling api.video for changes. We currently offer four events:
 
-* ```video.encoding.quality.completed``` Occurs when a new video is uploaded into your account, it will be encoded into several different HLS and mp4 qualities. When each version is encoded, your webhook will get a notification.  It will look like ```{ "type": "video.encoding.quality.completed", "emittedAt": "2021-01-29T16:46:25.217+01:00", "videoId": "viXXXXXXXX", "encoding": "hls", "quality": "720p"} ```. This request says that the 720p HLS encoding was completed.
+* `video.encoding.quality.completed` Occurs when a new video is uploaded into your account, it will be encoded into several different HLS and mp4 qualities. When each version is encoded, your webhook will get a notification.  It will look like ```{ "type": "video.encoding.quality.completed", "emittedAt": "2021-01-29T16:46:25.217+01:00", "videoId": "viXXXXXXXX", "encoding": "hls", "quality": "720p"} ```. This request says that the 720p HLS encoding was completed.
 
-* ```live-stream.broadcast.started```  When a live stream begins broadcasting, the broadcasting parameter changes from false to true, and this webhook fires.
+* `live-stream.broadcast.started`  When a live stream begins broadcasting, the broadcasting parameter changes from false to true, and this webhook fires.
 
-* ```live-stream.broadcast.ended```  This event fires when a live stream has finished broadcasting.
+* `live-stream.broadcast.ended`  This event fires when a live stream has finished broadcasting.
 
-* ```video.source.recorded```  This event occurs when a live stream is recorded and submitted for encoding.
+* `video.source.recorded`  This event occurs when a live stream is recorded and submitted for encoding.
+
+* `video.caption.generated`  This event occurs when an automatic caption has been generated.
+
+* `video.summary.generated`  This event occurs when an automatic summary has been generated.
 
  * @return WebhooksApiCreateRequest
 */
@@ -138,13 +142,17 @@ func (s *WebhooksService) Create(webhooksCreationPayload WebhooksCreationPayload
  * Create Create Webhook
  * Webhooks can push notifications to your server, rather than polling api.video for changes. We currently offer four events:
 
-* ```video.encoding.quality.completed``` Occurs when a new video is uploaded into your account, it will be encoded into several different HLS and mp4 qualities. When each version is encoded, your webhook will get a notification.  It will look like ```{ "type": "video.encoding.quality.completed", "emittedAt": "2021-01-29T16:46:25.217+01:00", "videoId": "viXXXXXXXX", "encoding": "hls", "quality": "720p"} ```. This request says that the 720p HLS encoding was completed.
+* `video.encoding.quality.completed` Occurs when a new video is uploaded into your account, it will be encoded into several different HLS and mp4 qualities. When each version is encoded, your webhook will get a notification.  It will look like ```{ "type": "video.encoding.quality.completed", "emittedAt": "2021-01-29T16:46:25.217+01:00", "videoId": "viXXXXXXXX", "encoding": "hls", "quality": "720p"} ```. This request says that the 720p HLS encoding was completed.
 
-* ```live-stream.broadcast.started```  When a live stream begins broadcasting, the broadcasting parameter changes from false to true, and this webhook fires.
+* `live-stream.broadcast.started`  When a live stream begins broadcasting, the broadcasting parameter changes from false to true, and this webhook fires.
 
-* ```live-stream.broadcast.ended```  This event fires when a live stream has finished broadcasting.
+* `live-stream.broadcast.ended`  This event fires when a live stream has finished broadcasting.
 
-* ```video.source.recorded```  This event occurs when a live stream is recorded and submitted for encoding.
+* `video.source.recorded`  This event occurs when a live stream is recorded and submitted for encoding.
+
+* `video.caption.generated`  This event occurs when an automatic caption has been generated.
+
+* `video.summary.generated`  This event occurs when an automatic summary has been generated.
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return WebhooksApiCreateRequest
 */
