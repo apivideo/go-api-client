@@ -18957,7 +18957,7 @@ x-webhooks:
                 type:
                   type: string
                   description: The name of the webhook event that occurred.
-                  example: video.caption.generated
+                  example: video.summary.generated
                 emittedAt:
                   description: Returns the date-time when the webhook event occurred.
                   type: string
